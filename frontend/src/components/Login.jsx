@@ -6,6 +6,25 @@ function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const response = await fetch('http://localhost:5000/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username,
+                password,
+            }),
+        });
+
+        const data = await response.json();
+
+        console.log(data);
+    }
+
   return (
     <div className="h-screen p-12 px-24 bg-[#fefefe] flex justify-center">
         <div className="h-full register-col z-10 shadow-2xl bg-white w-[70%]">
@@ -15,7 +34,7 @@ function Login() {
                     <p>Login your Account</p>
                 </div>
                 <div className='mt-10 w-3/4'>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div className="mt-4 flex flex-col">
                             <label htmlFor="username" className="pl-2">Username</label>
                             <input type="text" id="username" placeholder="Username" required className="rounded-xl bg-[#f3f4f8] p-2 border-2 font-medium" value={username} onChange={(e) => setUsername(e.target.value)} />
