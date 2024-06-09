@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "../index.css";
 
 function Register() {
@@ -7,6 +8,7 @@ function Register() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -27,7 +29,16 @@ function Register() {
     
         const data = await response.json();
     
-        console.log(data);
+        if (response.ok) {
+            // Store the JWT in local storage
+            localStorage.setItem('token', data.token);
+    
+            // Redirect the user to the dashboard
+            navigate('/dashboard');
+        } else {
+            // Handle error
+            console.error(data);
+        }
     };
 
     return (
