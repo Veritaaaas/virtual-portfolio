@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+
 import "../index.css";
 
 function Login() {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const response = await fetch('http://localhost:5000/login', {
+        const response = await fetch('http://127.0.0.1:5000/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -25,9 +28,12 @@ function Login() {
         if (response.ok) {
             // Store the JWT in local storage
             localStorage.setItem('token', data.token);
+
+            // Redirect the user to the dashboard
+            navigate('/dashboard');
         } else {
             // Handle error
-            console.error(data);
+            alert("Invalid username or password");
         }
     }
 
@@ -56,7 +62,7 @@ function Login() {
                         </div>
                     </form>
                     <div>
-                        <p className="mt-4 text-center">Don't have an account? <a href="/register" className="text-[#453DE0]">Register</a></p>
+                        <p className="mt-4 text-center">Don't have an account? <Link to="/register" className="text-[#453DE0]">Register</Link></p>
                     </div>
                 </div>
             </div>
