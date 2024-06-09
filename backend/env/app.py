@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import mysql.connector as my
 import logging
 import bcrypt
@@ -7,7 +8,8 @@ import bcrypt
 app = Flask(__name__)
 CORS(app)
 
-logging.basicConfig(level=logging.INFO)
+app.config['JWT_SECRET_KEY'] = 'JGm8AG0QH6'  # Change this!
+jwt = JWTManager(app)
 
 cnx = my.connect(
     host="localhost",
@@ -46,7 +48,8 @@ def login():
     hashed_password = user[3].encode('utf-8')
     
     if bcrypt.checkpw(password, hashed_password):
-        return jsonify({"message": "Login successful"}), 200
+        access_token = create_access_token(identity=data['username'])
+        return jsonify(access_token=access_token), 200
     else:
         return jsonify({"error": "Invalid username or password"}), 400
     
