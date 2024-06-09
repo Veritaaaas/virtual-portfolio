@@ -22,7 +22,13 @@ function Login() {
 
         const data = await response.json();
 
-        console.log(data);
+        if (response.ok) {
+            // Store the JWT in local storage
+            localStorage.setItem('token', data.token);
+        } else {
+            // Handle error
+            console.error(data);
+        }
     }
 
   return (
