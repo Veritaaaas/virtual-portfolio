@@ -9,7 +9,7 @@ function Login() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const response = await fetch('http://localhost:5000/', {
+        const response = await fetch('http://localhost:5000/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -46,9 +46,12 @@ function Login() {
                         </div>
 
                         <div className="mt-8 flex justify-center">
-                                <button type="submit" className="bg-[#ffbe30] px-4 py-2 rounded-3xl text-lg font-bold w-1/2">Get Started</button>
+                                <button type="submit" className="bg-[#453DE0] text-white px-4 py-2 rounded-3xl text-lg font-bold w-1/2">Get Started</button>
                         </div>
                     </form>
+                    <div>
+                        <p className="mt-4 text-center">Don't have an account? <a href="/register" className="text-[#453DE0]">Register</a></p>
+                    </div>
                 </div>
             </div>
 
