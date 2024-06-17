@@ -1,6 +1,13 @@
 import Logo from '../assets/logo.png';
 
 function Navbar() {
+
+  const Logout = () => {
+    localStorage.removeItem('token');
+    console.log('Logged out');
+    // Redirect to login or do other cleanup tasks here
+  };
+
   return (
     <nav className='bg-white shadow-2xl p-4 px-10 flex justify-between'>
       <div className='flex items-center gap-6'>
@@ -11,8 +18,8 @@ function Navbar() {
         <h1 className='text-[#453DE0] font-bold text-[30px]'>Portfolio</h1>
         <h1 className='text-[#453DE0] font-bold text-[30px]'>Trade</h1>
         <h1 className='text-[#453DE0] font-bold text-[30px]'>History</h1>
-        <h1 className='text-[#453DE0] font-bold text-[30px]'>Logout</h1>
-      </div>
+        <h1 className='text-[#453DE0] font-bold text-[30px]' onClick={Logout}> Logout</h1>
+      </div> 
     </nav>
   );
 }
