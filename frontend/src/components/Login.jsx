@@ -27,7 +27,7 @@ function Login() {
 
         if (response.ok) {
             // Store the JWT in local storage
-            localStorage.setItem('token', data.token);
+            localStorage.setItem('token', data.access_token);
 
             // Redirect the user to the dashboard
             navigate('/dashboard');

@@ -2,8 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
 
 .register-col {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
+}
+
+body {
+    background-color: #F8F9FD;
+    font-family: 'DM Sans', sans-serif;
 }
