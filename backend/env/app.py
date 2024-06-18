@@ -5,6 +5,8 @@ import mysql.connector as my
 import logging
 import bcrypt
 
+from helpers import lookup
+
 app = Flask(__name__)
 CORS(app)
 
@@ -48,7 +50,7 @@ def login():
     hashed_password = user[3].encode('utf-8')
     
     if bcrypt.checkpw(password, hashed_password):
-        access_token = create_access_token(identity=data['username'])
+        access_token = create_access_token(identity=user[0])
         return jsonify(access_token=access_token), 200
     else:
         return jsonify({"error": "Invalid username or password"}), 400
@@ -89,6 +91,38 @@ def register():
     cnx.commit()
 
     return jsonify({"message": "Registration successful"}), 200
+
+@app.route('/dashboard', methods=['GET', 'POST'])
+@jwt_required()
+def dashboard():
+    if request.method == 'GET':
+        # Get the username from the JWT
+        current_user = get_jwt_identity()
+        print("Current user:", current_user)
+
+        # Create a cursor
+        cursor = cnx.cursor()
+
+        # Query database for user's stocks
+        query = "SELECT * FROM portfolio WHERE portfolio.user_id = %s"
+        cursor.execute(query, (current_user,))
+        rows = cursor.fetchall()
+
+        stocks = []
+        cash = 0
+
+        for row in rows:
+            stock = lookup(row[1])
+            stock['symbol'] = row[1]
+            stock["shares"] = row[2]
+            stock['total'] = row[2] * stock['current_price']
+            stocks.append(stock)
+            
+        query = "SELECT cash FROM users WHERE user_id = %s"
+        cursor.execute(query, (current_user,))
+        cash = cursor.fetchall()[0][0]
+
+        return jsonify(stocks=stocks,cash=cash ), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
