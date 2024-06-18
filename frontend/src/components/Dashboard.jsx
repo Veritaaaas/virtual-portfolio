@@ -1,8 +1,35 @@
-import Navbar from "./Navbar"
+import { useEffect, useState } from "react"
 
+import Navbar from "./Navbar"
 import wallet from "../assets/wallet.png"
 
 function Dashboard() {
+
+    const [portfolio, setPortfolio] = useState([]);
+    const [cash, setCash] = useState(0);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token'); 
+        console.log(token);
+    
+        fetch('http://127.0.0.1:5000/dashboard', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            setCash(data.cash);
+            setPortfolio(data.stocks);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }, []);
+
     return (
         <div className="w-full h-full flex flex-col">
             <Navbar />
@@ -13,7 +40,7 @@ function Dashboard() {
                         <h1 className="font-bold text-[#453DE0] text-[35px]">My Wallet</h1>
                     </div>
                     <div>
-                        <h1 className="font-bold text-[#453DE0] text-[40px] ml-5">10 000 USD</h1>
+                        <h1 className="font-bold text-[#453DE0] text-[40px] ml-5">{cash} USD</h1>
                     </div>
                 </div>
                 <div className="bg-white w-[300px] py-4 flex flex-col items-center gap-4 rounded-xl">
@@ -37,13 +64,15 @@ function Dashboard() {
                             <th>Price</th>
                             <th>Total</th>
                         </tr>
-                        <tr className="text-center">
-                            <td>GOOGL</td>
-                            <td>Google</td>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>100</td>
-                        </tr>
+                        {portfolio.map((stock, index) => (
+                            <tr key={index} className="text-center">
+                                <td>{stock.symbol}</td>
+                                <td>{stock.company_name}</td>
+                                <td>{stock.shares}</td>
+                                <td>{stock.current_price}</td>
+                                <td>{stock.total}</td>
+                            </tr>
+                        ))}
                     </table>
                 </div>
             </div>
