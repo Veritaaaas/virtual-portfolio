@@ -18,3 +18,16 @@ body {
 button {
     font-family: 'DM Sans', sans-serif;
 }
+
+.hoverable::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #453DE0;
+    transition: width .3s;
+  }
+  
+.hoverable:hover::after {
+    width: 100%;
+  }
