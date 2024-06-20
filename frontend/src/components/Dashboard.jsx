@@ -7,8 +7,8 @@ function Dashboard() {
 
     const [portfolio, setPortfolio] = useState([]);
     const [cash, setCash] = useState(0);
-    const [deposit, setDeposit] = useState(0)
-    const [withdraw, setWithdraw] = useState(0)
+    const [deposit, setDeposit] = useState()
+    const [withdraw, setWithdraw] = useState()
 
     useEffect(() => {
         const token = localStorage.getItem('token'); 
@@ -99,19 +99,19 @@ function Dashboard() {
                 </div>
                 <div className="bg-white w-[300px] py-4 flex flex-col items-center gap-4 rounded-xl">
                     <h1 className="font-bold text-[#453DE0] text-[35px]">Deposit</h1>
-                    <input type="text" className="rounded-lg w-[200px] h-[40px] bg-[#EBEEFB]" value={deposit} onChange={(e) => setDeposit(e.target.value)} />
+                    <input type="text" className="rounded-lg w-[200px] h-[40px] bg-[#EBEEFB] p-2" value={deposit} onChange={(e) => setDeposit(e.target.value)} />
                     <button className="bg-[#453DE0] text-white w-[150px] h-[40px] rounded-lg mt-4" onClick={handleDeposit}>Deposit Now</button>
                 </div>
                 <div className="bg-white w-[300px] py-4 flex flex-col items-center gap-4 rounded-xl">
                     <h1 className="font-bold text-[#453DE0] text-[35px]">Withdraw</h1>
-                    <input type="text" className="rounded-lg w-[200px] h-[40px] bg-[#EBEEFB]" value={withdraw} onChange={(e) => setWithdraw(e.target.value)}/>
+                    <input type="text" className="rounded-lg w-[200px] h-[40px] bg-[#EBEEFB] p-2" value={withdraw} onChange={(e) => setWithdraw(e.target.value)}/>
                     <button className="bg-[#453DE0] text-white w-[150px] h-[40px] rounded-lg mt-4" onClick={handleWithdraw}>Withdraw Now</button>
                 </div>
             </div>
             <div className="px-16">
                 <div className="bg-white">
-                    <table className="w-full">
-                        <tr className="text-center">
+                    <table className="w-full text-[20px] text-[#A9ACBB] font-bold">
+                        <tr className="text-center text-[#453DE0]">
                             <th>Symbol</th>
                             <th>Company Name</th>
                             <th>Shares</th>
