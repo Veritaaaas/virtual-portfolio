@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Logo from '../assets/logo.png';
 
 function Navbar() {
@@ -15,10 +16,16 @@ function Navbar() {
         <h1 className='text-[40px] text-[#453DE0] font-bold'>Marketify</h1>
       </div>
       <div className='flex gap-8 items-center'>
-        <h1 className='text-[#453DE0] font-bold text-[30px]'>Portfolio</h1>
-        <h1 className='text-[#453DE0] font-bold text-[30px]'>Trade</h1>
-        <h1 className='text-[#453DE0] font-bold text-[30px]'>History</h1>
-        <h1 className='text-[#453DE0] font-bold text-[30px]' onClick={Logout}> Logout</h1>
+        <h1 className='text-[#453DE0] font-bold text-[30px] border-[#453DE0] cursor-pointer hoverable'>
+          <Link to="/dashboard">Portfolio</Link>
+        </h1>
+        <h1 className='text-[#453DE0] font-bold text-[30px] cursor-pointer hoverable'>
+          <Link to="/trade">Trade</Link>
+        </h1>
+        <h1 className='text-[#453DE0] font-bold text-[30px] cursor-pointer hoverable'>
+          <Link to="/history">History</Link>
+        </h1>
+        <h1 className='text-[#453DE0] font-bold text-[30px] cursor-pointer hoverable' onClick={Logout}> Logout</h1>
       </div> 
     </nav>
   );
