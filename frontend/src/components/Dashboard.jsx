@@ -109,7 +109,7 @@ function Dashboard() {
                 </div>
             </div>
             <div className="px-16">
-                <div className="bg-white">
+                <div className="bg-white min-h-[450px]">
                     <table className="w-full text-[20px] text-[#A9ACBB] font-bold">
                         <tr className="text-center text-[#453DE0]">
                             <th>Symbol</th>
@@ -117,6 +117,7 @@ function Dashboard() {
                             <th>Shares</th>
                             <th>Price</th>
                             <th>Total</th>
+                            <th></th>
                         </tr>
                         {portfolio.map((stock, index) => (
                             <tr key={index} className="text-center">
@@ -125,6 +126,7 @@ function Dashboard() {
                                 <td>{stock.shares}</td>
                                 <td>{stock.current_price}</td>
                                 <td>{stock.total}</td>
+                                <td><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg">Sell</button></td>
                             </tr>
                         ))}
                     </table>
