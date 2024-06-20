@@ -92,7 +92,7 @@ def register():
 
     return jsonify({"message": "Registration successful"}), 200
 
-@app.route('/dashboard', methods=['GET', 'POST'])
+@app.route('/dashboard', methods=['GET'])
 @jwt_required()
 def dashboard():
     if request.method == 'GET':
@@ -123,6 +123,35 @@ def dashboard():
         cash = cursor.fetchall()[0][0]
 
         return jsonify(stocks=stocks,cash=cash ), 200
+    
+@app.route('/deposit', methods=['POST'])
+@jwt_required()
+def deposit():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    
+    data['deposit'] = float(data['deposit'])
+
+    if not all(key in data for key in ['deposit']):
+        return jsonify({"error": "Missing fields in request"}), 400
+
+    current_user = get_jwt_identity()
+
+    cursor = cnx.cursor()
+
+    query = "SELECT cash FROM users WHERE user_id = %s"
+    cursor.execute(query, (current_user,))
+    cash = cursor.fetchall()[0][0]
+    
+    new_cash = cash + data['deposit']
+
+    query = "UPDATE users SET cash = %s WHERE user_id = %s"
+    cursor.execute(query, (new_cash, current_user))
+    cnx.commit()
+
+    return jsonify({'cash': new_cash}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
