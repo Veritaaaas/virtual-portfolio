@@ -15,3 +15,5 @@ def lookup(symbol):
         "current_price": current_price
     }
 
+def USD(value):
+    return "${:,.2f}".format(value)

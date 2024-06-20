@@ -5,7 +5,7 @@ import mysql.connector as my
 import logging
 import bcrypt
 
-from helpers import lookup
+from helpers import lookup, USD
 
 app = Flask(__name__)
 CORS(app)
@@ -116,11 +116,13 @@ def dashboard():
             stock['symbol'] = row[1]
             stock["shares"] = row[2]
             stock['total'] = row[2] * stock['current_price']
+            stock['current_price'] = USD(stock['current_price'])
+            stock['total'] = USD(stock['total'])
             stocks.append(stock)
             
         query = "SELECT cash FROM users WHERE user_id = %s"
         cursor.execute(query, (current_user,))
-        cash = cursor.fetchall()[0][0]
+        cash = USD(cursor.fetchall()[0][0])
 
         return jsonify(stocks=stocks,cash=cash ), 200
     
