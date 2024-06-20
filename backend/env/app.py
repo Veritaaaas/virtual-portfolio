@@ -153,5 +153,37 @@ def deposit():
 
     return jsonify({'cash': new_cash}), 200
 
+@app.route('/withdraw', methods=['POST'])  
+@jwt_required()
+def withdraw():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    
+    data['withdraw'] = float(data['withdraw'])
+
+    if not all(key in data for key in ['withdraw']):
+        return jsonify({"error": "Missing fields in request"}), 400
+
+    current_user = get_jwt_identity()
+
+    cursor = cnx.cursor()
+
+    query = "SELECT cash FROM users WHERE user_id = %s"
+    cursor.execute(query, (current_user,))
+    cash = cursor.fetchall()[0][0]
+    
+    if (cash < data['withdraw']):
+        return jsonify({"error": "Insufficient funds"}), 400
+    
+    new_cash = cash - data['withdraw']
+
+    query = "UPDATE users SET cash = %s WHERE user_id = %s"
+    cursor.execute(query, (new_cash, current_user))
+    cnx.commit()
+
+    return jsonify({'cash': new_cash}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)

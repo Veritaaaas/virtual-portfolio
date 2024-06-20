@@ -58,6 +58,31 @@ function Dashboard() {
         }
     }
 
+    const handleWithdraw = async(event) => {
+        event.preventDefault();
+
+        const token = localStorage.getItem('token');
+
+        const response = await fetch('http://127.0.0.1:5000/withdraw', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                withdraw
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            setCash(data.cash);
+        }
+        else {
+            alert("Invalid withdraw amount");
+        }
+    }
 
     return (
         <div className="w-full h-full flex flex-col">
