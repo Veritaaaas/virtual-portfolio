@@ -10,7 +10,6 @@ function Trade() {
     const [lookupData, setLookupData] = useState()
     const [isBuying, setIsBuying] = useState(false)
     const [currentSymbol, setCurrentSymbol] = useState()
-    const [currentPrice, setCurrentPrice] = useState()
 
     const updateIsBuying = (newIsBuying) => {
         setIsBuying(newIsBuying);
@@ -63,10 +62,9 @@ function Trade() {
         }
     }
 
-    const handleBuyClick = (symbol, price) => {
+    const handleBuyClick = (symbol) => {
         setIsBuying(true);
         setCurrentSymbol(symbol); 
-        setCurrentPrice(price);
     };
 
     return (
@@ -98,7 +96,7 @@ function Trade() {
                             <td>{lookupData?.net_income}</td>
                             <td>{lookupData?.price}</td>
                             {lookupData &&
-                                <td><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg" onClick={() => handleBuyClick(lookupData?.symbol, lookupData?.price)}>Buy</button></td>
+                                <td><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg" onClick={() => handleBuyClick(lookupData?.symbol)}>Buy</button></td>
                             }
                         </tr>
                     </table>
@@ -125,7 +123,7 @@ function Trade() {
                                     <td className="py-2">{stock?.revenue_growth}</td>
                                     <td className="py-2">{stock?.net_income}</td>
                                     <td className="py-2">{stock?.price}</td>
-                                    <td className="py-2"><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg" onClick={() => handleBuyClick(stock.symbol, stock.price)}>Buy</button></td>
+                                    <td className="py-2"><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg" onClick={() => handleBuyClick(stock.symbol)}>Buy</button></td>
                                 </tr>
                             ))}
                         </tbody>

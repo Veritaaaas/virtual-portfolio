@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaTimes } from 'react-icons/fa';
 
-function Modal({ type, symbol, updateIsBuying }) {
+function Modal({ type, symbol, updateIsBuying, updateIsSelling }) {
 
     const [quantity, setQuantity] = useState();
 
@@ -57,7 +57,7 @@ function Modal({ type, symbol, updateIsBuying }) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white w-[400px] py-4 flex flex-col items-center gap-4 rounded-xl">
                 <div className="flex justify-end w-full px-6">
-                    <FaTimes className="text-[#453DE0] text-[25px] m-0 p-0 cursor-pointer" onClick={() => updateIsBuying(false)}/>
+                    <FaTimes className="text-[#453DE0] text-[25px] m-0 p-0 cursor-pointer" onClick={() => type === "Sell" ? updateIsSelling(false) : updateIsBuying(false)}/>
                 </div>
                 <h1 className="font-bold text-[#453DE0] text-[35px] m-0 p-0 cursor-pointer">{type}</h1>
                 <h1 className="font-bold text-[#453DE0] text-[35px]">{symbol}</h1>
