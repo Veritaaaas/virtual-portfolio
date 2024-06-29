@@ -256,6 +256,58 @@ def buy():
     cnx.commit()
 
     return jsonify({"cash": new_cash}), 200
+
+@app.route('/sell', methods=['POST'])
+@jwt_required()
+def sell():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    if not all(key in data for key in ["symbol", "quantity"]):
+        return jsonify({"error": "Missing fields in request"}), 400
+
+    current_user = get_jwt_identity()
+
+    cursor = cnx.cursor()
+
+    query = "SELECT cash FROM users WHERE user_id = %s"
+    cursor.execute(query, (current_user,))
+    cash = cursor.fetchall()[0][0]
+    
+    stock = lookup(data["symbol"])
+    total = stock["current_price"] * int(data["quantity"])
+    
+    query = "SELECT * FROM portfolio WHERE user_id = %s AND symbol = %s"
+    cursor.execute(query, (current_user, data["symbol"]))
+    rows = cursor.fetchall()
+    
+    if len(rows) == 1:
+        if rows[0][2] < int(data["quantity"]):
+            return jsonify({"error": "Insufficient shares"}), 400
+        elif rows[0][2] == int(data["quantity"]):
+            query = "DELETE FROM portfolio WHERE user_id = %s AND symbol = %s"
+            cursor.execute(query, (current_user, data["symbol"]))
+            cnx.commit()
+        else:
+            query = "UPDATE portfolio SET shares = shares - %s WHERE user_id = %s AND symbol = %s"
+            cursor.execute(query, (data["quantity"], current_user, data["symbol"]))
+            cnx.commit()
+    else:
+        return jsonify({"error": "Insufficient shares"}), 400
+    
+    query = "INSERT INTO history (user_id, date, symbol, shares, price, total, type) VALUES(%s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(query, (current_user, datetime.now(), data["symbol"], data["quantity"], stock["current_price"], total, "SELL"))
+    cnx.commit()
+
+    new_cash = cash + total
+
+    query = "UPDATE users SET cash = %s WHERE user_id = %s"
+    cursor.execute(query, (new_cash, current_user))
+    cnx.commit()
+
+    return jsonify({"cash": new_cash}), 200
     
 @app.route('/trade', methods=['GET'])
 @jwt_required()
