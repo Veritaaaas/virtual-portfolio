@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 import mysql.connector as my
 import logging
 import bcrypt
+from datetime import datetime
 
 from helpers import lookup, USD, query
 
@@ -205,7 +206,56 @@ def look():
     stock["net_income"] = USD(stock["net_income"])
     
     return jsonify(stock), 200
+
+@app.route('/buy', methods=['POST'])
+@jwt_required()
+def buy():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    if not all(key in data for key in ["symbol", "quantity"]):
+        return jsonify({"error": "Missing fields in request"}), 400
+
+    current_user = get_jwt_identity()
+
+    cursor = cnx.cursor()
+
+    query = "SELECT cash FROM users WHERE user_id = %s"
+    cursor.execute(query, (current_user,))
+    cash = cursor.fetchall()[0][0]
     
+    stock = lookup(data["symbol"])
+    total = stock["current_price"] * int(data["quantity"])
+    
+    if total > cash:
+        return jsonify({"error": "Insufficient funds"}), 400
+
+    query = "SELECT * FROM portfolio WHERE user_id = %s AND symbol = %s"
+    cursor.execute(query, (current_user, data["symbol"]))
+    rows = cursor.fetchall()
+    
+    if len(rows) == 1:
+        query = "UPDATE portfolio SET shares = shares + %s WHERE user_id = %s AND symbol = %s"
+        cursor.execute(query, (data["quantity"], current_user, data["symbol"]))
+        cnx.commit()
+    else:
+        query = "INSERT INTO portfolio (user_id, symbol, shares) VALUES(%s, %s, %s)"
+        cursor.execute(query, (current_user, data["symbol"], data["quantity"]))
+        cnx.commit()
+    
+    query = "INSERT INTO history (user_id, date, symbol, shares, price, total, type) VALUES(%s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(query, (current_user, datetime.now(), data["symbol"], data["quantity"], stock["current_price"], total, "BUY"))
+    cnx.commit()
+
+    new_cash = cash - total
+
+    query = "UPDATE users SET cash = %s WHERE user_id = %s"
+    cursor.execute(query, (new_cash, current_user))
+    cnx.commit()
+
+    return jsonify({"cash": new_cash}), 200
     
 @app.route('/trade', methods=['GET'])
 @jwt_required()
