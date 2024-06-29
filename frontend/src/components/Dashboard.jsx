@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 
 import Navbar from "./Navbar"
 import wallet from "../assets/wallet.png"
+import Modal from "./Modal";
+import '../index.css'
 
 function Dashboard() {
 
@@ -9,6 +11,9 @@ function Dashboard() {
     const [cash, setCash] = useState(0);
     const [deposit, setDeposit] = useState()
     const [withdraw, setWithdraw] = useState()
+    const [isSelling, setIsSelling] = useState(false)
+    const [currentSymbol, setCurrentSymbol] = useState()
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         const token = localStorage.getItem('token'); 
@@ -25,6 +30,7 @@ function Dashboard() {
             console.log(data);
             setCash(data.cash);
             setPortfolio(data.stocks);
+            setIsLoading(false);
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -84,6 +90,19 @@ function Dashboard() {
         }
     }
 
+    const handleSellClick = (symbol) => {
+        setIsSelling(true);
+        setCurrentSymbol(symbol);
+    }
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen min-w-full flex justify-center items-center">
+                <div className="loader"></div>
+            </div>
+        )
+    }
+
     return (
         <div className="w-full h-full flex flex-col">
             <Navbar />
@@ -126,12 +145,13 @@ function Dashboard() {
                                 <td className="py-2">{stock.shares}</td>
                                 <td className="py-2">{stock.current_price}</td>
                                 <td className="py-2">{stock.total}</td>
-                                <td className="py-2"><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg">Sell</button></td>
+                                <td className="py-2"><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg" onClick={() => handleSellClick(stock.symbol)}>Sell</button></td>
                             </tr>
                         ))}
                     </table>
                 </div>
             </div>
+            {isSelling && <Modal type="Sell" symbol={currentSymbol} updateIsSelling={setIsSelling} />}
         </div>
     )
 }
