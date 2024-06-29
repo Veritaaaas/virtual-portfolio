@@ -21,25 +21,35 @@ def query(symbol):
     stock = yf.Ticker(symbol)
 
     # Get the company name
-    company_name = stock.info['shortName']
+    company_name = stock.info.get('shortName', 'N/A')
     
     # Get the company symbol
-    company_symbol = stock.info['symbol']
+    company_symbol = stock.info.get('symbol', 'N/A')
 
     # Get the EPS ratio
-    eps_ratio = stock.info['trailingEps']
+    eps_ratio = stock.info.get('trailingEps', 'N/A')
 
     # Get the PE Ratio
-    pe_ratio = stock.info['trailingPE']
+    pe_ratio = stock.info.get('trailingPE', 'N/A')
 
     # Get the Revenue Growth
-    revenue_growth = stock.info['revenueGrowth']
+    revenue_growth = stock.info.get('revenueGrowth', 'N/A')
 
     # Get the Net Income
-    net_income = stock.info['netIncomeToCommon']
+    net_income = stock.info.get('netIncomeToCommon', 'N/A')
+    
+    # Fetch the stock history for the last day
+    history = stock.history(period="1d")
 
-    # Get the current stock price
-    current_price = stock.history(period="1d").tail(1)['Close'].iloc[0]
+    # Check if the history DataFrame is not empty
+    if not history.empty:
+        current_price = history['Close'].iloc[-1]  # Safely access the last 'Close' value
+    else:
+        # Handle the case where no data is available
+        # For example, set current_price to None or log a warning
+        current_price = None
+        print("Warning: No data available for the stock's last closing price.")
+        
 
     return {
         "name": company_name,
@@ -55,16 +65,3 @@ def query(symbol):
 def USD(value):
     return "${:,.2f}".format(value)
 
-def get_trending_stocks():
-    # Get the trending stocks
-    finnhub_client = finnhub.Client(api_key="cpq4j0hr01qo647ncmj0cpq4j0hr01qo647ncmjg")
-    trending = finnhub_client.stock_symbols('US')
-    trending = trending[:10]
-    
-    symbols = []
-    
-    for i in range(len(trending)):
-        symbol = trending[i]['symbol']
-        symbols.append(symbol)
-    
-    return symbols
