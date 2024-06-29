@@ -5,7 +5,7 @@ import mysql.connector as my
 import logging
 import bcrypt
 
-from helpers import lookup, USD
+from helpers import lookup, USD, get_trending_stocks, query
 
 app = Flask(__name__)
 CORS(app)
@@ -98,7 +98,6 @@ def dashboard():
     if request.method == 'GET':
         # Get the username from the JWT
         current_user = get_jwt_identity()
-        print("Current user:", current_user)
 
         # Create a cursor
         cursor = cnx.cursor()
@@ -186,6 +185,32 @@ def withdraw():
     cnx.commit()
 
     return jsonify({'cash': new_cash}), 200
+
+
+@app.route('/look', methods=['POST'])
+@jwt_required()
+def look():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    if not all(key in data for key in ["symbol"]):
+        return jsonify({"error": "Missing fields in request"}), 400
+
+    stock = query(data["symbol"])
+    
+    stock["price"] = USD(stock["price"])
+    
+    return jsonify(stock), 200
+    
+    
+@app.route('/trade', methods=['GET'])
+@jwt_required()
+def trade():
+    recommended = get_trending_stocks()
+    return jsonify(recommended), 200
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
