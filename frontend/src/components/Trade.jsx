@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react"
 
 import Navbar from "./Navbar"
+import Modal from "./Modal"
 
 function Trade() {
 
     const [symbol, setSymbol] = useState()
     const [suggestions, setSuggestions] = useState([])
     const [lookupData, setLookupData] = useState()
-    const [isbBuying, setIsBuying] = useState(false)
+    const [isBuying, setIsBuying] = useState(false)
+    const [currentSymbol, setCurrentSymbol] = useState()
+    const [currentPrice, setCurrentPrice] = useState()
+
+    const updateIsBuying = (newIsBuying) => {
+        setIsBuying(newIsBuying);
+    };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -27,6 +34,7 @@ function Trade() {
             console.error('Error:', error);
         });
     }, []);
+
 
     const handleLookup = async(event) => {
         event.preventDefault();
@@ -54,6 +62,12 @@ function Trade() {
             alert(data.error);
         }
     }
+
+    const handleBuyClick = (symbol, price) => {
+        setIsBuying(true);
+        setCurrentSymbol(symbol); 
+        setCurrentPrice(price);
+    };
 
     return (
         <div className="w-full h-full flex flex-col">
@@ -84,7 +98,7 @@ function Trade() {
                             <td>{lookupData?.net_income}</td>
                             <td>{lookupData?.price}</td>
                             {lookupData &&
-                                <td><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg">Buy</button></td>
+                                <td><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg" onClick={() => handleBuyClick(lookupData?.symbol, lookupData?.price)}>Buy</button></td>
                             }
                         </tr>
                     </table>
@@ -111,14 +125,17 @@ function Trade() {
                                     <td className="py-2">{stock?.revenue_growth}</td>
                                     <td className="py-2">{stock?.net_income}</td>
                                     <td className="py-2">{stock?.price}</td>
-                                    <td className="py-2"><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg">Buy</button></td>
+                                    <td className="py-2"><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg" onClick={() => handleBuyClick(stock.symbol, stock.price)}>Buy</button></td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
             </div>
-
+            {isBuying && <Modal 
+            type="Buy"
+            symbol={currentSymbol} 
+            updateIsBuying={updateIsBuying} />}
         </div>
     )
 }

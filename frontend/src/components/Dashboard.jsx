@@ -121,12 +121,12 @@ function Dashboard() {
                         </tr>
                         {portfolio.map((stock, index) => (
                             <tr key={index} className="text-center">
-                                <td>{stock.symbol}</td>
-                                <td>{stock.company_name}</td>
-                                <td>{stock.shares}</td>
-                                <td>{stock.current_price}</td>
-                                <td>{stock.total}</td>
-                                <td><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg">Sell</button></td>
+                                <td className="py-2">{stock.symbol}</td>
+                                <td className="py-2">{stock.company_name}</td>
+                                <td className="py-2">{stock.shares}</td>
+                                <td className="py-2">{stock.current_price}</td>
+                                <td className="py-2">{stock.total}</td>
+                                <td className="py-2"><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg">Sell</button></td>
                             </tr>
                         ))}
                     </table>
