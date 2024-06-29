@@ -5,8 +5,28 @@ import Navbar from "./Navbar"
 function Trade() {
 
     const [symbol, setSymbol] = useState()
+    const [suggestions, setSuggestions] = useState([])
     const [lookupData, setLookupData] = useState()
+    const [isbBuying, setIsBuying] = useState(false)
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+
+        fetch('http://127.0.0.1:5000/trade', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            setSuggestions(data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }, []);
 
     const handleLookup = async(event) => {
         event.preventDefault();
@@ -34,7 +54,6 @@ function Trade() {
             alert(data.error);
         }
     }
-
 
     return (
         <div className="w-full h-full flex flex-col">
@@ -71,6 +90,35 @@ function Trade() {
                     </table>
                 </div>
             </div>
+            <div className="px-16">
+                <div className="bg-white min-h-[450px] py-6">
+                    <table className="w-full text-[20px] text-[#A9ACBB] font-bold">
+                        <tr className="text-center text-[#453DE0]">
+                            <th>Symbol</th>
+                            <th>EPS</th>
+                            <th>PE Ratio</th>
+                            <th>Revenue Growth</th>
+                            <th>Net Income</th>
+                            <th>Price</th>
+                            <th></th>
+                        </tr>
+                        <tbody className="divide-y-0">
+                            {suggestions.map((stock, index) => (
+                                <tr key={index} className="text-center">
+                                    <td className="py-2">{stock?.symbol}</td>
+                                    <td className="py-2">{stock?.eps}</td>
+                                    <td className="py-2">{stock?.pe_ratio}</td>
+                                    <td className="py-2">{stock?.revenue_growth}</td>
+                                    <td className="py-2">{stock?.net_income}</td>
+                                    <td className="py-2">{stock?.price}</td>
+                                    <td className="py-2"><button className="bg-[#453DE0] text-white w-[100px] h-[30px] rounded-lg">Buy</button></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     )
 }
