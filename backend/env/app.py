@@ -5,7 +5,7 @@ import mysql.connector as my
 import logging
 import bcrypt
 
-from helpers import lookup, USD, get_trending_stocks, query
+from helpers import lookup, USD, query
 
 app = Flask(__name__)
 CORS(app)
@@ -201,6 +201,8 @@ def look():
     stock = query(data["symbol"])
     
     stock["price"] = USD(stock["price"])
+    stock["revenue_growth"] = "{:.2%}".format(stock["revenue_growth"])
+    stock["net_income"] = USD(stock["net_income"])
     
     return jsonify(stock), 200
     
@@ -208,8 +210,16 @@ def look():
 @app.route('/trade', methods=['GET'])
 @jwt_required()
 def trade():
-    recommended = get_trending_stocks()
-    return jsonify(recommended), 200
+    suggestions = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'JNJ', 'V']
+    
+    for i in range(len(suggestions)):
+        suggestions[i] = query(suggestions[i])
+        print(suggestions[i])
+        suggestions[i]["price"] = USD(suggestions[i]["price"])
+        suggestions[i]["revenue_growth"] = "{:.2%}".format(suggestions[i]["revenue_growth"])
+        suggestions[i]["net_income"] = USD(suggestions[i]["net_income"])
+        
+    return jsonify(suggestions), 200
     
 
 if __name__ == '__main__':
