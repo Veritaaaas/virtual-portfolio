@@ -25,7 +25,9 @@ function Navbar() {
         <h1 className='text-[#453DE0] font-bold text-[30px] cursor-pointer hoverable'>
           <Link to="/history">History</Link>
         </h1>
-        <h1 className='text-[#453DE0] font-bold text-[30px] cursor-pointer hoverable' onClick={Logout}> Logout</h1>
+        <Link to={"/"}>
+          <h1 className='text-[#453DE0] font-bold text-[30px] cursor-pointer hoverable' onClick={Logout}> Logout</h1>
+        </Link>
       </div> 
     </nav>
   );

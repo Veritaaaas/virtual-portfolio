@@ -54,7 +54,7 @@ function Login() {
 
                         <div className="mt-8 flex flex-col">
                             <label htmlFor="password" className="pl-2">Password</label>
-                            <input type="password" id="password" placeholder="Enter password" required className="rounded-xl bg-[#f3f4f8] p-2 border-2 font-medium" value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <input type="password" id="password" placeholder="Enter password" required className="rounded-xl bg-[#f3f4f8] p-2 border-2" value={password} onChange={(e) => setPassword(e.target.value)} />
                         </div>
 
                         <div className="mt-8 flex justify-center">

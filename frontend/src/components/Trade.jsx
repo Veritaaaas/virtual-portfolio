@@ -10,6 +10,7 @@ function Trade() {
     const [lookupData, setLookupData] = useState()
     const [isBuying, setIsBuying] = useState(false)
     const [currentSymbol, setCurrentSymbol] = useState()
+    const [isLoading, setIsLoading] = useState(true)
 
     const updateIsBuying = (newIsBuying) => {
         setIsBuying(newIsBuying);
@@ -28,6 +29,7 @@ function Trade() {
         .then(response => response.json())
         .then(data => {
             setSuggestions(data);
+            setIsLoading(false);
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -66,6 +68,14 @@ function Trade() {
         setIsBuying(true);
         setCurrentSymbol(symbol); 
     };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen min-w-full flex justify-center items-center">
+                <div className="loader"></div>
+            </div>
+        )
+    }
 
     return (
         <div className="w-full h-full flex flex-col">

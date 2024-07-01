@@ -5,6 +5,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Trade from "./components/Trade";
+import History from "./components/History";
 
 
 function App() {
@@ -23,6 +24,11 @@ function App() {
           <Route path="/trade" element={
           <PrivateRoute>
             <Trade />
+          </PrivateRoute>
+        } />
+        <Route path="/history" element={
+          <PrivateRoute>
+            <History />
           </PrivateRoute>
         } />
         </Routes>
