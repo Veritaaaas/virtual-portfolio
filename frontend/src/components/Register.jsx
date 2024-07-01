@@ -30,13 +30,10 @@ function Register() {
         const data = await response.json();
     
         if (response.ok) {
-            // Store the JWT in local storage
             localStorage.setItem('token', data.token);
-    
-            // Redirect the user to the dashboard
             navigate('/dashboard');
         } else {
-            // Handle error
+
             console.error(data);
         }
     };
