@@ -201,6 +201,9 @@ def look():
 
     stock = query(data["symbol"])
     
+    if stock["price"] == None:
+        return jsonify({"error": "Invalid symbol"}), 400
+    
     stock["price"] = USD(stock["price"])
     stock["revenue_growth"] = "{:.2%}".format(stock["revenue_growth"])
     stock["net_income"] = USD(stock["net_income"])
@@ -316,13 +319,36 @@ def trade():
     
     for i in range(len(suggestions)):
         suggestions[i] = query(suggestions[i])
-        print(suggestions[i])
         suggestions[i]["price"] = USD(suggestions[i]["price"])
         suggestions[i]["revenue_growth"] = "{:.2%}".format(suggestions[i]["revenue_growth"])
         suggestions[i]["net_income"] = USD(suggestions[i]["net_income"])
         
     return jsonify(suggestions), 200
     
+@app.route('/history', methods=['GET'])
+@jwt_required()
+def history():
+    current_user = get_jwt_identity()
+    
+    cursor = cnx.cursor()
+
+    query = "SELECT * FROM history WHERE user_id = %s"
+    cursor.execute(query, (current_user,))
+    rows = cursor.fetchall()
+
+    history = []
+    
+    for row in rows:
+        history.append({
+            "date": row[1],
+            "symbol": row[2],
+            "shares": row[3],
+            "price": USD(int(row[4])),
+            "total": USD(int(row[5])),
+            "type": row[6]
+        })
+    
+    return jsonify(history), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
